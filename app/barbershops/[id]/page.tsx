@@ -1,12 +1,10 @@
+import { PhoneItem } from "@/app/_components/phone-item"
+import { ServiceItem } from "@/app/_components/service-item"
+import { SidebarSheet } from "@/app/_components/sidebar-sheet"
 import { Button } from "@/app/_components/ui/button"
+import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet"
 import { db } from "@/app/_lib/prisma"
-import {
-  ChevronLeftIcon,
-  MapPinIcon,
-  MenuIcon,
-  Sheet,
-  StarIcon,
-} from "lucide-react"
+import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -20,11 +18,14 @@ interface BarbershopPageProps {
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const barbershop = await db.barbershop.findUnique({
     where: {
-      id: params.id,
+      id: params?.id,
+    },
+    include: {
+      services: true,
     },
   })
 
-  if(!barbershop) return notFound();
+  if (!barbershop) return notFound()
 
   return (
     <div>
@@ -47,6 +48,18 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
             <ChevronLeftIcon />
           </Link>
         </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              variant="outline"
+              className="absolute top-4 right-4"
+            >
+              <MenuIcon />
+            </Button>
+          </SheetTrigger>
+          <SidebarSheet />
+        </Sheet>
       </div>
 
       {/* TÍTULO */}
@@ -63,9 +76,24 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
         </div>
       </div>
 
-      <div className="border-b border-solid p-5 space-y-3">
-        <h2 className="text-xs font-bold uppercase text-gray-400">Sobre nós</h2>
+      <div className="space-y-3 border-b border-solid p-5">
+        <h2 className="text-xs font-bold text-gray-400 uppercase">Sobre nós</h2>
         <p className="text-sm">{barbershop?.description}</p>
+      </div>
+
+      <div className="space-y-3 p-5">
+        <h2 className="text-xs font-bold text-gray-400 uppercase">Serviços</h2>
+        <div className="space-y-3">
+          {barbershop.services.map((service) => (
+            <ServiceItem service={service} key={service?.id} />
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3 p-5">
+        {barbershop.phones.map((phone, index) => (
+          <PhoneItem phone={phone} key={index} />
+        ))}
       </div>
     </div>
   )

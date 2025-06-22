@@ -5,7 +5,6 @@ import { Input } from "./_components/ui/input"
 import Image from "next/image"
 import { db } from "./_lib/prisma"
 import BarbershopItem from "./_components/barbershop-item"
-import { Footer } from "./_components/footer"
 import { quickSearchOptions } from "./_constants/search"
 import Link from "next/link"
 import { BookingItem } from "./_components/bookging-item"
@@ -74,7 +73,6 @@ export default async function Home() {
             <BarbershopItem key={barbershop.id} barbershop={barbershop} />
           ))}
         </div>
-        <Footer />
       </div>
     </div>
   )
